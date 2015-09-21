@@ -2,6 +2,7 @@
 
 var http = require('http');
 var express = require('express');
+var swaggerUiMiddleware = require('swagger-ui-middleware');
 
 var Service = {
 
@@ -9,6 +10,7 @@ var Service = {
         var app = express();
 
         app.use(logger);
+        swaggerUiMiddleware.hostUI(app, {overrides: __dirname + '/../swagger-ui/'});
 
         app.get('/', function(req, res) {
             res.status(200)
