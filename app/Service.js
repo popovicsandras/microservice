@@ -1,5 +1,6 @@
 'use strict';
 
+var http = require('http');
 var express = require('express');
 
 var Service = {
@@ -19,11 +20,12 @@ var Service = {
                 .send('File not found!');
         });
 
-        app.listen(config.get('port'), function() {
+        var server = http.createServer(app);
+        server.listen(config.get('port'), function() {
             console.log('Service started on port ' + config.get('port'));
         });
 
-        return app;
+        return server;
     }
 };
 

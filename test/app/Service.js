@@ -1,4 +1,4 @@
-/* global beforeEach, describe, it, assert */
+/* global beforeEach, afterEach, describe, it, assert */
 
 'use strict';
 
@@ -17,6 +17,10 @@ describe('Service', function() {
         };
 
         app = Service.create(logger, config);
+    });
+
+    afterEach(function() {
+        app.close();
     });
 
     it('should return a "Hello world" plain text response', function(done) {
