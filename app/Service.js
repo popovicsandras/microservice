@@ -2,29 +2,38 @@
 
 var http = require('http');
 var express = require('express');
+var SampleAPI = require('./api/SampleAPI');
+var VersionAPI = require('./api/VersionAPI');
+
 var swaggerUiMiddleware = require('swagger-ui-middleware');
 
-var Service = {
+function Service(apis) {
+    apis = apis || {};
+    this.sampleAPI = apis.sampleAPI ? apis.sampleAPI: new SampleAPI();
+    this.versionAPI  = apis.versionAPI ? apis.versionAPI : new VersionAPI();
+}
 
-    create: function(logger, config) {
-        var app = express();
+Service.prototype = {
 
-        app.use(logger);
+    start: function(port) {
+        var app = express(),
+            sampleAPI = this.sampleAPI,
+            versionAPI = this.versionAPI;
+
+        // /api-doc endpoint
         swaggerUiMiddleware.hostUI(app, {overrides: __dirname + '/../swagger-ui/'});
 
-        app.get('/', function(req, res) {
-            res.status(200)
-                .send('Hello world');
+        app.get('/sample', function(request, response) {
+            sampleAPI.get(request, response);
         });
 
-        app.use(function(req, res) {
-            res.status(404)
-                .send('File not found!');
+        app.get('/admin/version', function(request, response) {
+            versionAPI.get(request, response);
         });
 
         var server = http.createServer(app);
-        server.listen(config.get('port'), function() {
-            console.log('Service started on port ' + config.get('port'));
+        server.listen(port, function() {
+            console.log('Service started on port ' + port);
         });
 
         return server;
